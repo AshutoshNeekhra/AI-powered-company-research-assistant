@@ -1,84 +1,134 @@
-# Company Research Assistant (Streamlit)
+# 🔎 AI Company Research Assistant
 
-A single-stack Python app — no Node/npm, no build step — that researches
-any company from a **name** or **website URL**: it finds the official
-site, crawls the key pages, searches the web for supporting facts, runs
-everything through an OpenRouter-hosted AI model, identifies competitors,
-and produces a downloadable **PDF report**, with optional automatic
-delivery to a **Discord channel**.
+An AI-powered company research application built with **Streamlit** that researches a company from either its **name or website URL**.
 
-## Files
+The application discovers the official website, gathers information using **Serper.dev**, crawls relevant company pages, analyzes the collected information using a selectable **OpenRouter AI model**, identifies competitors, highlights potential business pain points, and generates a downloadable **PDF research report**.
 
-```
-app.py            Streamlit chat UI
-utils.py          Search (Serper.dev) + crawler (requests/bs4) + AI (OpenRouter)
-                  + PDF (fpdf2) + Discord (Bot API) — all the actual logic
-requirements.txt  pip dependencies
-.streamlit/secrets.toml.example   template for your API keys
-```
+It also includes an optional **Discord integration** for automatically delivering the generated report to a Discord channel.
 
-## 1. Install
+## 🚀 Live Demo
 
-```bash
-pip install -r requirements.txt
-```
+**Streamlit App:**  
+https://ai-powered-company-research-assistant-dve4bmgj8ep5awhevbegje.streamlit.app/
 
-## 2. Configure your API keys
+**GitHub Repository:**  
+https://github.com/AshutoshNeekhra/AI-powered-company-research-assistant
 
-Copy the example secrets file and fill in your keys:
+---
 
-```bash
-cp .streamlit/secrets.toml.example .streamlit/secrets.toml
-```
+## ✨ Features
 
-```toml
-SERPER_API_KEY = "..."          # https://serper.dev
-OPENROUTER_API_KEY = "..."      # https://openrouter.ai/keys
-OPENROUTER_DEFAULT_MODEL = "openai/gpt-4o-mini"
-```
+### 🔍 Company Discovery
+- Accepts a company name or website URL.
+- Automatically searches for the company's likely official website when a name is provided.
+- Uses Serper.dev for supporting web research.
 
-(Env vars `SERPER_API_KEY` / `OPENROUTER_API_KEY` also work if you'd rather
-not use `secrets.toml`.)
+### 🌐 Website Crawling
+- Crawls the company's website for relevant information.
+- Targets important pages such as:
+  - Home
+  - About
+  - Products
+  - Services
+  - Solutions
+  - Contact
+  - Pricing
+- Skips duplicate URLs, login pages, irrelevant pages, and unsupported files.
+- Handles websites that restrict direct crawling by falling back to search-engine research.
 
-Discord Bot Token / Channel ID / applicant name & email are entered in the
-app's **sidebar** at runtime — kept only in that browser session, no
-database, per the "no auth / no persistence" requirement.
+### 🤖 AI-Powered Analysis
+Uses OpenRouter to analyze the collected information and generate:
 
-## 3. Run
+- Company summary
+- Products and services
+- Potential business/operational pain points
+- Relevant competitors
+- Competitor websites
 
-```bash
-streamlit run app.py
-```
+The application supports multiple OpenRouter models and also provides a custom model option.
 
-## 4. Deploy on Streamlit Community Cloud
+### 📊 Competitor Analysis
+Competitors are identified based on factors such as:
 
-1. Push this folder to a GitHub repo.
-2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app** →
-   point it at `app.py` in your repo.
-3. Under **Advanced settings → Secrets**, paste the same two keys as TOML
-   (same format as `secrets.toml.example`).
-4. Deploy — you'll get a public URL automatically.
+- Industry
+- Products and services
+- Market relevance
+- Geographic relevance where available
 
-## How it works
+### 📄 PDF Reports
+Generate and download a professional PDF containing:
 
-1. You type a company name or URL into the chat box.
-2. If it's a name, Serper.dev finds the likely official website.
-3. Three Serper.dev searches run for company overview, contact info, and
-   competitors.
-4. The site is crawled (home + up to 5 more pages: about/products/services/
-   contact/pricing), skipping duplicates, logins, and binary files.
-5. Crawled text + search snippets go to your chosen OpenRouter model with a
-   strict JSON-output prompt → summary, products, pain points, competitors.
-6. A PDF report is generated with `fpdf2` (pure Python, no system deps —
-   works out of the box on Streamlit Cloud).
-7. Optionally, one click posts the applicant info, company info, and the
-   PDF to a Discord channel via the Discord Bot API.
+- Company information
+- Website
+- Summary
+- Products/services
+- AI-generated pain points
+- Competitor analysis
 
-## Notes
+PDF generation is handled using `fpdf2`.
 
-- No database, accounts, or auth — everything lives in the Streamlit
-  session for the current visit.
-- The AI model dropdown covers a few popular OpenRouter models plus a
-  "Custom..." option for any other model slug.
-- If a site blocks scraping, the assistant still produces a result from
-  search-engine snippets alone — just with less detail.
+### 💬 Discord Integration — Bonus
+Optional Discord integration allows the generated report to be sent to a Discord channel.
+
+The user can provide:
+
+- Discord Bot Token
+- Discord Channel ID
+- Applicant Name
+- Applicant Email
+
+Discord information is stored only for the current Streamlit session and is not persisted in a database.
+
+---
+
+## 🏗️ Architecture
+
+```text
+                    ┌─────────────────────┐
+                    │    User Input       │
+                    │ Company Name / URL  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │    Serper.dev       │
+                    │ Official Website    │
+                    │ Web Research        │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Website Crawler     │
+                    │ Requests + BS4      │
+                    │ Key Pages           │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │  Research Context   │
+                    │ Crawled Text +      │
+                    │ Search Results      │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │     OpenRouter      │
+                    │   AI Analysis       │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+              ┌─────────────────────────────────┐
+              │       Research Results          │
+              │                                 │
+              │ • Company Summary               │
+              │ • Products / Services           │
+              │ • Pain Points                   │
+              │ • Competitors                   │
+              └───────────────┬─────────────────┘
+                              │
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+             ┌─────────────┐     ┌──────────────┐
+             │ PDF Report  │     │ Discord      │
+             │ Download    │     │ Integration  │
+             └─────────────┘     └──────────────┘
