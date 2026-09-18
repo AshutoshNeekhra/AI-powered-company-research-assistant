@@ -67,7 +67,7 @@ Generate and download a professional PDF containing:
 
 PDF generation is handled using `fpdf2`.
 
-### 💬 Discord Integration — Bonus
+### 💬 Discord Integration
 Optional Discord integration allows the generated report to be sent to a Discord channel.
 
 The user can provide:
